@@ -1,4 +1,4 @@
-// Handle call button: post to server to log the call
+// Handle call button: post to server to log the call and start tel:
 document.addEventListener('click', function(e){
   const target = e.target.closest('.call-btn');
   if (!target) return;
@@ -19,6 +19,8 @@ document.addEventListener('click', function(e){
   } catch (err) {
     console.warn('Call log failed', err);
   }
+  // Navigate to tel: to start the call
+  setTimeout(()=> { window.location.href = 'tel:' + phone; }, 150);
 });
 
 // Handle note submit
@@ -111,7 +113,7 @@ document.addEventListener("click", async function (e) {
                 `<span class="badge bg-secondary me-2">${startIndex + idx + 1}</span>` +
                 `<a href="/contacts/${c._id}" class="text-decoration-none">${escapeHtml(c.name)}</a>` +
               `</h6>` +
-              `<p class="mb-1"><small class="text-muted">📞</small> <a href="tel:${escapeHtml(c.phone||'')}" class="text-decoration-none"><small>${escapeHtml(c.phone||'')}</small></a></p>` +
+              `<p class="mb-1"><small class="text-muted">📞</small> <small>${escapeHtml(c.phone||'')}</small></p>` +
               `${c.lastCallAt ? `<p class="mb-1"><small class="text-muted">Last: ${new Date(c.lastCallAt).toLocaleDateString()}</small></p>` : ''}` +
               `<span class="badge bg-info">${c.notesCount||0} notes</span>` +
             `</div>` +
