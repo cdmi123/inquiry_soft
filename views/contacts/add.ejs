@@ -1,0 +1,34 @@
+<%- include('../partials/header') %>
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h1 class="card-title mb-0 h4">➕ Add New Contact</h1>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" action="/contacts/add" novalidate>
+          <div class="mb-3">
+            <label class="form-label" for="name">Full Name <span class="text-danger">*</span></label>
+            <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="John Doe" required />
+            <small class="form-text text-muted">Required field</small>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="phone">Phone Number <span class="text-danger">*</span></label>
+            <input type="tel" id="phone" name="phone" class="form-control form-control-lg" placeholder="+1 (555) 123-4567" required />
+            <small class="form-text text-muted">Required field</small>
+          </div>
+          <div class="mb-4">
+            <label class="form-label" for="description">Description <span class="text-secondary">(Optional)</span></label>
+            <textarea id="description" name="description" class="form-control" rows="4" placeholder="Enter contact details, notes, company, etc."></textarea>
+            <small class="form-text text-muted">Add any additional information about this contact</small>
+          </div>
+          <div class="d-grid gap-2 gap-sm-0">
+            <a href="/" class="btn btn-secondary btn-lg btn-sm-auto">Cancel</a>
+            <button type="submit" class="btn btn-success btn-lg btn-sm-auto">✓ Add Contact</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

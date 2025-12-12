@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: node-contact-mvc
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    # Add envVars in Render dashboard or via CLI
