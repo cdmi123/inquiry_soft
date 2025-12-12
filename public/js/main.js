@@ -5,9 +5,19 @@ document.addEventListener('click', function(e){
   const id = target.dataset.id;
   const phone = target.dataset.phone;
   if (!id || !phone) return;
-  // Send POST to log call, but don't block navigation
-  fetch('/contacts/' + id + '/call', { method: 'POST', headers: {'Content-Type':'application/json'} })
-    .catch(err => console.warn('Call log failed', err));
+  // Send POST to log call. Use navigator.sendBeacon when available so it survives navigation.
+  try {
+    const url = '/contacts/' + id + '/call';
+    if (navigator.sendBeacon) {
+      const payload = new Blob([JSON.stringify({})], { type: 'application/json' });
+      navigator.sendBeacon(url, payload);
+    } else {
+      fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, keepalive: true })
+        .catch(err => console.warn('Call log failed', err));
+    }
+  } catch (err) {
+    console.warn('Call log failed', err);
+  }
   // navigate to tel (after tiny delay to allow request to start)
   setTimeout(()=> { window.location.href = 'tel:' + phone; }, 150);
 });
