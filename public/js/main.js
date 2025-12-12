@@ -117,7 +117,7 @@ document.addEventListener("click", async function (e) {
               `<span class="badge bg-info">${c.notesCount||0} notes</span>` +
             `</div>` +
             `<div class="ms-2 d-flex flex-column gap-2">` +
-              `<a class="btn btn-sm btn-primary" href="tel:${escapeHtml(c.phone||'')}">📞</a>` +
+              `<button class="btn btn-sm btn-primary call-btn" data-id="${c._id}" data-phone="${escapeHtml(c.phone||'')}" type="button">📞</button>` +
               `<a class="btn btn-sm btn-success" href="https://wa.me/${phoneLink}?text=${encodeURIComponent('Hi ' + (c.name || ''))}" target="_blank" rel="noopener">💬</a>` +
               `<a class="btn btn-sm btn-outline-secondary" href="/contacts/${c._id}">→</a>` +
             `</div>` +
