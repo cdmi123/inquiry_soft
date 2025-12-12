@@ -1,25 +1,24 @@
-// Handle call button: post to server to log then navigate to tel:
+// Handle call button: post to server to log the call
 document.addEventListener('click', function(e){
   const target = e.target.closest('.call-btn');
   if (!target) return;
   const id = target.dataset.id;
   const phone = target.dataset.phone;
   if (!id || !phone) return;
-  // Send POST to log call. Use navigator.sendBeacon when available so it survives navigation.
+  // Send POST to log call. Use navigator.sendBeacon when available.
   try {
     const url = '/contacts/' + id + '/call';
     if (navigator.sendBeacon) {
-      const payload = new Blob([JSON.stringify({})], { type: 'application/json' });
-      navigator.sendBeacon(url, payload);
+      const formData = new FormData();
+      formData.append('_method', 'POST');
+      navigator.sendBeacon(url, formData);
     } else {
-      fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, keepalive: true })
+      fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, keepalive: true, body: JSON.stringify({}) })
         .catch(err => console.warn('Call log failed', err));
     }
   } catch (err) {
     console.warn('Call log failed', err);
   }
-  // navigate to tel (after tiny delay to allow request to start)
-  setTimeout(()=> { window.location.href = 'tel:' + phone; }, 150);
 });
 
 // Handle note submit
