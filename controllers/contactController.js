@@ -3,8 +3,17 @@ const Note = require('../models/Note');
 const { appendNoteRow, getSheetRows } = require('../helpers/sheetsHelper');
 
 exports.list = async (req, res) => {
-  const contacts = await Contact.find().sort({ createdAt: -1 });
-  res.render('contacts/list', { contacts });
+  const perPage = 70;
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const totalCount = await Contact.countDocuments();
+  const totalPages = Math.ceil(totalCount / perPage) || 1;
+
+  const contacts = await Contact.find()
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * perPage)
+    .limit(perPage);
+
+  res.render('contacts/list', { contacts, currentPage: page, totalPages, totalCount, perPage });
 };
 
 exports.showAdd = (req, res) => {
@@ -100,5 +109,35 @@ exports.syncContacts = async (req, res) => {
   } catch (err) {
     console.error('Sync error:', err);
     res.status(500).json({ ok: false, message: err.message || 'Sync failed' });
+  }
+};
+
+// API: return paginated contacts as JSON for client-side polling
+exports.apiList = async (req, res) => {
+  try {
+    const perPage = 70;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const totalCount = await Contact.countDocuments();
+    const totalPages = Math.ceil(totalCount / perPage) || 1;
+
+    const contacts = await Contact.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .lean();
+
+    const rows = contacts.map(c => ({
+      _id: c._id,
+      name: c.name,
+      phone: c.phone,
+      lastCallAt: c.lastCallAt,
+      notesCount: c.notesCount || 0,
+      createdAt: c.createdAt
+    }));
+
+    res.json({ ok: true, contacts: rows, currentPage: page, totalPages, totalCount, perPage });
+  } catch (err) {
+    console.error('API list error:', err);
+    res.status(500).json({ ok: false, message: 'Server error' });
   }
 };

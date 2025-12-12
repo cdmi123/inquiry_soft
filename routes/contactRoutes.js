@@ -10,5 +10,6 @@ router.post('/contacts/:id/call', contactController.logCall);
 router.post('/contacts/:id/notes', contactController.addNote);
 
 router.get('/sync-sheet', contactController.syncContacts);
+router.get('/api/contacts', contactController.apiList);
 
 module.exports = router;
