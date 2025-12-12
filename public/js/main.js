@@ -57,9 +57,9 @@ document.addEventListener("click", async function (e) {
   }
 });
 
-// Poll the server every 10 seconds to update the contacts list without full page refresh
+// Poll the server every 1 second to update the contacts list without full page refresh
 (function startContactsPolling(){
-  const POLL_MS = 10000;
+  const POLL_MS = 1000;
   if (!window.contactPagination) return;
 
   function escapeHtml(str){ return String(str||'').replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
