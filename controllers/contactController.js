@@ -141,3 +141,16 @@ exports.apiList = async (req, res) => {
     res.status(500).json({ ok: false, message: 'Server error' });
   }
 };
+
+// API: get contact with notes as JSON
+exports.apiDetail = async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) return res.status(404).json({ ok: false, msg: 'Contact not found' });
+    const notes = await Note.find({ contact: contact._id }).sort({ createdAt: -1 });
+    res.json({ ok: true, contact, notes });
+  } catch (err) {
+    console.error('API detail error:', err);
+    res.status(500).json({ ok: false, message: 'Server error' });
+  }
+};

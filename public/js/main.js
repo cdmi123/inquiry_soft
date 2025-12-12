@@ -111,7 +111,7 @@ document.addEventListener("click", async function (e) {
             `<td style="padding: 16px 15px; vertical-align: middle; border: none; text-center;">` +
               `<div class="btn-group" role="group" style="display: flex; gap: 6px; justify-content: center;">` +
                 `<button class="btn btn-sm call-btn" data-id="${c._id}" data-phone="${escapeHtml(c.phone||'')}" title="Call" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease;">\ud83d\udcde Call</button>` +
-                `<a class="btn btn-sm" href="/contacts/${c._id}" title="Details" style="background: #e8eef7; color: #667eea; border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease;">👁️ View</a>` +
+                `<a class="btn btn-sm view-btn" href="javascript:void(0)" data-contact-id="${c._id}" title="Details" style="background: #e8eef7; color: #667eea; border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease; cursor: pointer;">👁️ View</a>` +
                 `<a class="btn btn-sm" href="https://wa.me/${phoneLink}?text=${encodeURIComponent('Hi ' + (c.name || ''))}" target="_blank" rel="noopener" title="WhatsApp" style="background: #d4f1d4; color: #155724; border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease;">\ud83d\udcac Chat</a>` +
               `</div>` +
             `</td>`;
@@ -148,7 +148,7 @@ document.addEventListener("click", async function (e) {
             `</div>` +
             `<div class="btn-actions-mobile" style="flex:0 0 auto; margin-left:12px; display:flex; flex-direction:column; gap:6px; min-width:fit-content;">` +
               `<button class="btn mobile-action call-btn" data-id="${c._id}" data-phone="${escapeHtml(c.phone||'')}" style="background: linear-gradient(135deg, #6f59e6 0%, #a46de6 100%); border:none; color:white; padding:6px 10px; border-radius:8px; font-weight:700; font-size:0.85rem; white-space:nowrap;">📞 Call</button>` +
-              `<a class="btn mobile-action" href="/contacts/${c._id}" style="background:#eef3ff; color:#3b3f56; padding:6px 10px; border-radius:8px; text-decoration:none; font-size:0.85rem; white-space:nowrap; text-align:center;">👁️ View</a>` +
+              `<a class="btn mobile-action view-btn" href="javascript:void(0)" data-contact-id="${c._id}" style="background:#eef3ff; color:#3b3f56; padding:6px 10px; border-radius:8px; text-decoration:none; font-size:0.85rem; white-space:nowrap; text-align:center; cursor:pointer;">👁️ View</a>` +
               `<a class="btn mobile-action" href="https://wa.me/${phoneLink}?text=${encodeURIComponent('Hi ' + (c.name || ''))}" target="_blank" rel="noopener" style="background:#dff6e8; color:#155724; padding:6px 10px; border-radius:8px; text-decoration:none; font-size:0.85rem; white-space:nowrap; text-align:center;">💬 Chat</a>` +
             `</div>`;
           mobileList.appendChild(li);

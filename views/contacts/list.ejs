@@ -1,6 +1,21 @@
 <%- include('../partials/header') %>
 <% const startIndex = ((typeof currentPage !== 'undefined' ? currentPage : 1) - 1) * (perPage || contacts.length); %>
 
+<!-- Contact Details Modal -->
+<div id="contactModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true" style="display:none;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h5 class="modal-title" id="contactModalLabel">Contact Details</h5>
+        <button type="button" class="btn-close btn-close-white" id="closeModalBtn" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="contactDetailsContent">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Header Section -->
 <div class="mb-5">
   <div class="row align-items-center g-3">
@@ -71,7 +86,7 @@
             <td style="padding: 16px 15px; vertical-align: middle; border: none; text-center;">
               <div class="btn-group" role="group" style="display: flex; gap: 6px; justify-content: center;">
                 <button class="btn btn-sm call-btn" data-id="<%= c._id %>" data-phone="<%= c.phone %>" title="Call" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease;">📞 Call</button>
-                <a class="btn btn-sm" href="/contacts/<%= c._id %>" title="Details" style="background: #e8eef7; color: #667eea; border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease;">👁️ View</a>
+            <a class="btn btn-sm view-btn" href="javascript:void(0)" data-contact-id="<%= c._id %>" title="Details" style="background: #e8eef7; color: #667eea; border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease; cursor: pointer;">👁️ View</a>
                 <a class="btn btn-sm" href="https://wa.me/<%= phoneLink %>?text=<%= encodeURIComponent('Hi ' + (c.name || '') ) %>" target="_blank" rel="noopener" title="WhatsApp" style="background: #d4f1d4; color: #155724; border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; transition: all 0.2s ease;">💬 Chat</a>
               </div>
             </td>
@@ -124,7 +139,7 @@
 
         <div class="btn-actions-mobile" style="flex:0 0 auto; margin-left:12px; display:flex; flex-direction:column; gap:6px; min-width:fit-content;">
           <button class="btn mobile-action call-btn" data-id="<%= c._id %>" data-phone="<%= c.phone %>" style="background: linear-gradient(135deg, #6f59e6 0%, #a46de6 100%); border:none; color:white; padding:6px 10px; border-radius:8px; font-weight:700; font-size:0.85rem; white-space:nowrap;">📞 Call</button>
-          <a class="btn mobile-action" href="/contacts/<%= c._id %>" style="background:#eef3ff; color:#3b3f56; padding:6px 10px; border-radius:8px; text-decoration:none; font-size:0.85rem; white-space:nowrap; text-align:center;">👁️ View</a>
+          <a class="btn mobile-action view-btn" href="javascript:void(0)" data-contact-id="<%= c._id %>" style="background:#eef3ff; color:#3b3f56; padding:6px 10px; border-radius:8px; text-decoration:none; font-size:0.85rem; white-space:nowrap; text-align:center; cursor:pointer;">👁️ View</a>
           <a class="btn mobile-action" href="https://wa.me/<%= phoneLink %>?text=<%= encodeURIComponent('Hi ' + (c.name || '') ) %>" target="_blank" rel="noopener" style="background:#dff6e8; color:#155724; padding:6px 10px; border-radius:8px; text-decoration:none; font-size:0.85rem; white-space:nowrap; text-align:center;">💬 Chat</a>
         </div>
       </div>
@@ -242,6 +257,91 @@
       overflow-x: auto;
     }
   }
+
+  /* Modal styling */
+  #contactModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    display: none !important;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    padding: 20px;
+  }
+  
+  #contactModal.show {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-dialog {
+    position: relative;
+    width: auto;
+    max-width: 500px;
+    margin: auto;
+    max-height: 90vh;
+  }
+  
+  .modal-lg {
+    max-width: 800px;
+  }
+  
+  .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 0.3rem;
+    outline: 0;
+    box-shadow: 0 3px 9px rgba(0,0,0,0.5);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+  .modal-title {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 1.25rem;
+  }
+  .btn-close {
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: 0.25em 0.25em;
+    color: #000;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    border: 0;
+    border-radius: 0.3rem;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  .btn-close:hover {
+    opacity: 0.75;
+  }
+  .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+  .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 140px);
+  }
 </style>
 
 <script>
@@ -250,6 +350,159 @@
     totalPages: <%= typeof totalPages !== 'undefined' ? totalPages : 1 %>,
     perPage: <%= typeof perPage !== 'undefined' ? perPage : 70 %>
   };
+
+  // Modal functionality for View button - use event delegation for dynamically created buttons
+  document.addEventListener('click', async function(e) {
+    const viewBtn = e.target.closest('.view-btn');
+    if (!viewBtn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const contactId = viewBtn.dataset.contactId;
+    if (!contactId) {
+      console.warn('No contactId found on view button');
+      return;
+    }
+    
+    console.log('Opening modal for contact:', contactId);
+    
+    // Show modal and load contact details
+    const modal = document.getElementById('contactModal');
+    const content = document.getElementById('contactDetailsContent');
+    if (!modal || !content) {
+      console.error('Modal or content element not found');
+      return;
+    }
+    
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    content.innerHTML = 'Loading...';
+
+    try {
+      const res = await fetch('/api/contacts/' + contactId);
+      const json = await res.json();
+      if (!json.ok) {
+        content.innerHTML = 'Error loading contact: ' + (json.msg || 'Unknown error');
+        return;
+      }
+      
+      const contact = json.contact;
+      const notes = json.notes || [];
+      let notesHtml = notes.map(n => `
+        <div class="alert alert-light" style="margin-bottom: 10px; border-left: 4px solid #667eea;">
+          <p style="margin: 0; font-size: 0.95rem;">${n.noteText}</p>
+          <small style="color: #999;">${new Date(n.createdAt).toLocaleString()}</small>
+        </div>
+      `).join('');
+      
+      if (notes.length === 0) notesHtml = '<p style="color: #999; text-align: center;">No notes yet</p>';
+      
+      content.innerHTML = `
+        <div>
+          <h6 style="color: #2c3e50; font-weight: 700; margin-bottom: 15px;">
+            <span style="font-size: 1.1rem;">${contact.name}</span> 
+            <span style="color: #667eea; margin-left: 10px;">${contact.phone}</span>
+          </h6>
+          <hr style="margin: 15px 0;">
+          
+          <h6 style="color: #2c3e50; font-weight: 700; margin-bottom: 10px;">Add Note</h6>
+          <form id="addNoteForm" style="display: flex; gap: 8px; margin-bottom: 20px;">
+            <input type="text" id="noteInputField" placeholder="Enter new note..." required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem;">
+            <button type="submit" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Add Note</button>
+          </form>
+          
+          <h6 style="color: #2c3e50; font-weight: 700; margin-bottom: 10px;">Notes (${notes.length})</h6>
+          <div id="notesList" style="max-height: 300px; overflow-y: auto;">
+            ${notesHtml}
+          </div>
+        </div>
+      `;
+      
+      // Handle add note form submission
+      const addNoteForm = document.getElementById('addNoteForm');
+      if (addNoteForm) {
+        addNoteForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const noteInput = document.getElementById('noteInputField');
+          const noteText = noteInput.value.trim();
+          if (!noteText) return;
+          
+          try {
+            const res = await fetch('/contacts/' + contactId + '/notes', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ noteText })
+            });
+            const json = await res.json();
+            if (!json.ok) {
+              alert('Failed to save note: ' + (json.msg || 'Unknown error'));
+              return;
+            }
+            
+            // Clear input
+            noteInput.value = '';
+            
+            // Reload contact details to show new note
+            const reloadRes = await fetch('/api/contacts/' + contactId);
+            const reloadJson = await reloadRes.json();
+            if (reloadJson.ok) {
+              const updatedNotes = reloadJson.notes || [];
+              let updatedNotesHtml = updatedNotes.map(n => `
+                <div class="alert alert-light" style="margin-bottom: 10px; border-left: 4px solid #667eea;">
+                  <p style="margin: 0; font-size: 0.95rem;">${n.noteText}</p>
+                  <small style="color: #999;">${new Date(n.createdAt).toLocaleString()}</small>
+                </div>
+              `).join('');
+              if (updatedNotes.length === 0) updatedNotesHtml = '<p style="color: #999; text-align: center;">No notes yet</p>';
+              
+              const notesList = document.getElementById('notesList');
+              if (notesList) {
+                notesList.innerHTML = updatedNotesHtml;
+                // Update notes count in header
+                const header = document.querySelector('h6 + hr + h6');
+                if (header) header.textContent = `Notes (${updatedNotes.length})`;
+                
+                // Auto-close modal after 1 second
+                setTimeout(() => {
+                  const modal = document.getElementById('contactModal');
+                  modal.classList.remove('show');
+                  modal.setAttribute('aria-hidden', 'true');
+                }, 1000);
+              }
+            }
+          } catch (err) {
+            console.error('Error saving note:', err);
+            alert('Error saving note: ' + err.message);
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Error loading contact:', err);
+      content.innerHTML = 'Error: ' + err.message;
+    }
+  });
+
+  // Close modal
+  const closeBtn = document.getElementById('closeModalBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const modal = document.getElementById('contactModal');
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+    });
+  }
+  
+  window.addEventListener('click', function(e) {
+    const modal = document.getElementById('contactModal');
+    if (e.target === modal) {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  });
 </script>
 
 <%- include('../partials/footer') %>
