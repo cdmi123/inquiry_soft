@@ -9,7 +9,7 @@ exports.list = async (req, res) => {
   const totalPages = Math.ceil(totalCount / perPage) || 1;
 
   const contacts = await Contact.find()
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: 1 })
     .skip((page - 1) * perPage)
     .limit(perPage);
 
@@ -121,7 +121,7 @@ exports.apiList = async (req, res) => {
     const totalPages = Math.ceil(totalCount / perPage) || 1;
 
     const contacts = await Contact.find()
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .skip((page - 1) * perPage)
       .limit(perPage)
       .lean();
