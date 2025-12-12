@@ -28,7 +28,7 @@ function init() {
   }
 }
 
-async function appendNoteRow(phone, noteText, createdAt) {
+async function appendNoteRow(phone, noteText, createdAt, name) {
   if (!sheetsService) init();
   if (!sheetsService) throw new Error('Sheets not configured');
   
@@ -36,32 +36,41 @@ async function appendNoteRow(phone, noteText, createdAt) {
     // Get all rows to check if phone number exists
     const rows = await getSheetRows('Sheet1!A:C');
     let phoneRowIndex = -1;
-    
+
+    const normalize = (p) => (p || '').toString().replace(/\D/g, '');
+    const normPhone = normalize(phone);
+    const last10 = (s) => (s.length > 10 ? s.slice(-10) : s);
+
     // Find row with matching phone number (skip header row 0)
     for (let i = 1; i < rows.length; i++) {
-      if (rows[i][0] === phone) {
+      const rowPhoneRaw = rows[i][0] || '';
+      const normRow = normalize(rowPhoneRaw);
+      if (!normRow) continue;
+      if (normRow === normPhone || last10(normRow) === last10(normPhone)) {
         phoneRowIndex = i + 1; // Convert to 1-based row number for Google Sheets
         break;
       }
     }
-    
+
     const timestamp = new Date(createdAt).toISOString();
-    
+
     if (phoneRowIndex > 0) {
       // Update existing row with same phone number
       console.log(`Updating existing row ${phoneRowIndex} for phone ${phone}`);
+      // Write the note into column C (Notes). Keep column B (Name) unchanged.
       await sheetsService.spreadsheets.values.update({
         spreadsheetId: SHEET_ID,
-        range: `Sheet1!B${phoneRowIndex}:C${phoneRowIndex}`,
+        range: `Sheet1!C${phoneRowIndex}`,
         valueInputOption: 'USER_ENTERED',
         resource: {
-          values: [[noteText, timestamp]]
+          values: [[noteText]]
         }
       });
     } else {
       // Append new row if phone number not found
       console.log(`Appending new row for phone ${phone}`);
-      const values = [[phone, noteText, timestamp]];
+      // When appending, write: A=Phone, B=Name (if provided), C=Notes
+      const values = [[phone, name || '', noteText]];
       await sheetsService.spreadsheets.values.append({
         spreadsheetId: SHEET_ID,
         range: 'Sheet1!A:C',

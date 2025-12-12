@@ -52,7 +52,7 @@ exports.addNote = async (req, res) => {
     // Try to append note to Google Sheet (non-fatal)
     try {
       console.log(`Adding note to Google Sheets for ${contact.name} (${contact.phone})`);
-      await appendNoteRow(contact.phone, noteText, note.createdAt);
+      await appendNoteRow(contact.phone, noteText, note.createdAt, contact.name);
       console.log('Note successfully synced to Google Sheets');
     } catch (sheetErr) {
       console.warn('Google Sheets note sync failed:', sheetErr.message || sheetErr);
